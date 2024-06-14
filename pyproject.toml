@@ -1,66 +1,26 @@
-[tool.maturin]
+[project]
 name = "flpc"
 version = "0.1.1"
 description = "A Rust-based regex port for Python3 to faster performance. 👾"
-authors = ["Adarsh Gourab Mahalik gourabmahalikadarsh@gmail.com"]
+maintainers = [{ name = "Adarsh Gourab Mahalik", email = "gourabmahalikadarsh@gmail.com" }]
 readme = "README.md"
-homepage = "https://github.com/itsmeadarsh2008/flpc"
-repository = "https://github.com/itsmeadarsh2008/flpc.git"
 license = "MIT"
-keywords = [
-    "regex",
-    "rust",
-    "python",
-    "regexp",
-    "pattern",
-    "matching",
-    "search",
-    "replace",
-    "parse",
-    "extract",
-    "fast",
-    "high-performance",
-    "efficient",
-    "lightweight",
-    "port",
-    "binding",
-    "extension",
-    "compiled",
-    "native",
-    "speedup",
-    "optimization",
-    "accelerate",
-    "boost",
-    "enhance",
-    "improve",
-    "rapid",
-    "quick",
-    "swift",
-    "blazing",
-    "zippy",
-    "snappy",
-    "nimble",
-    "agile",
-    "responsive",
-    "peppy",
-    "lively",
-    "brisk",
-    "vigorous",
-    "dynamic",
-    "energetic",
-    "re",
+requires-python = ">=3.8"
+classifiers = [
+   "Programming Language :: Rust",
+   "Programming Language :: Python :: Implementation :: CPython",
+   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-[tool.maturin.urls]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/itsmeadarsh2008/flpc"
+Repository = "https://github.com/itsmeadarsh2008/flpc.git"
 "Bug Tracker" = "https://github.com/itsmeadarsh2008/flpc/issues"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+
 [build-system]
 requires = ["maturin>=1.6,<2.0"]
 build-backend = "maturin"
-[project]
-name = "flpc"
-requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-]
-dynamic = ["version"]

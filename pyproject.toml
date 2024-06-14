@@ -1,0 +1,66 @@
+[tool.maturin]
+name = "flpc"
+version = "0.1.0"
+description = "A Rust-based regex port for Python3 to faster performance. 👾"
+authors = ["Adarsh Gourab Mahalik gourabmahalikadarsh@gmail.com"]
+readme = "README.md"
+homepage = "https://github.com/itsmeadarsh2008/flpc"
+repository = "https://github.com/itsmeadarsh2008/flpc.git"
+license = "MIT"
+keywords = [
+    "regex",
+    "rust",
+    "python",
+    "regexp",
+    "pattern",
+    "matching",
+    "search",
+    "replace",
+    "parse",
+    "extract",
+    "fast",
+    "high-performance",
+    "efficient",
+    "lightweight",
+    "port",
+    "binding",
+    "extension",
+    "compiled",
+    "native",
+    "speedup",
+    "optimization",
+    "accelerate",
+    "boost",
+    "enhance",
+    "improve",
+    "rapid",
+    "quick",
+    "swift",
+    "blazing",
+    "zippy",
+    "snappy",
+    "nimble",
+    "agile",
+    "responsive",
+    "peppy",
+    "lively",
+    "brisk",
+    "vigorous",
+    "dynamic",
+    "energetic",
+    "re",
+]
+[tool.maturin.urls]
+"Bug Tracker" = "https://github.com/itsmeadarsh2008/flpc/issues"
+[build-system]
+requires = ["maturin>=1.6,<2.0"]
+build-backend = "maturin"
+[project]
+name = "flpc"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]

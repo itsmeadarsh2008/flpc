@@ -1,6 +1,6 @@
 [tool.maturin]
 name = "flpc"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Rust-based regex port for Python3 to faster performance. 👾"
 authors = ["Adarsh Gourab Mahalik gourabmahalikadarsh@gmail.com"]
 readme = "README.md"

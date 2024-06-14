@@ -152,7 +152,7 @@ fn flpc(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", "0.1.0")?;
     m.add(
         "__doc__",
-        "A Rust-based regex port for Python3 to faster performance. 👾",
+        "A Rust-based regex port for Python3 to get faster performance. 👾",
     )?;
     m.add("__name__", "flpc")?;
     m.add("__package__", "flpc")?;

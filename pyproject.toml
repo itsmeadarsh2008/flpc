@@ -1,7 +1,7 @@
 [project]
 name = "flpc"
-version = "0.1.2"
-description = "A Rust-based regex port for Python3 to faster performance. 👾"
+version = "0.1.3"
+description = "A Rust-based regex crate wrapper for Python3 to get faster performance. 👾"
 maintainers = [{ name = "Adarsh Gourab Mahalik", email = "gourabmahalikadarsh@gmail.com" }]
 readme = "README.md"
 license = "MIT"

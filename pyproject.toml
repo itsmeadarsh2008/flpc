@@ -1,6 +1,6 @@
 [project]
 name = "flpc"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Rust-based regex port for Python3 to faster performance. 👾"
 maintainers = [{ name = "Adarsh Gourab Mahalik", email = "gourabmahalikadarsh@gmail.com" }]
 readme = "README.md"

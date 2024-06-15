@@ -35,7 +35,7 @@ def search(pattern: Pattern, text: str) -> Optional[Match]:
     """Scan through a string, looking for any location where the regex pattern matches."""
     ...
 
-def find_match(pattern: Pattern, text: str) -> Optional[Match]:
+def fmatch(pattern: Pattern, text: str) -> Optional[Match]:
     """Try to apply the pattern at the start of the string, returning a match object if successful."""
     ...
 

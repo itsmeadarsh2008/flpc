@@ -63,8 +63,8 @@ fn search(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
     }
 }
 
-#[pyfunction(name = "find_match")]
-fn find_match(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
+#[pyfunction(name = "fmatch")]
+fn fmatch(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
     if let Some(mat) = pattern.regex.find(text) {
         if mat.start() == 0 {
             Ok(Some(Match {
@@ -161,7 +161,7 @@ fn flpc(m: &Bound<'_, PyModule>) -> PyResult<()> {
         vec![
             "compile",
             "search",
-            "find_match",
+            "fmatch",
             "fullmatch",
             "split",
             "findall",
@@ -175,7 +175,7 @@ fn flpc(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     m.add_function(wrap_pyfunction!(compile, m)?)?;
     m.add_function(wrap_pyfunction!(search, m)?)?;
-    m.add_function(wrap_pyfunction!(find_match, m)?)?;
+    m.add_function(wrap_pyfunction!(fmatch, m)?)?;
     m.add_function(wrap_pyfunction!(fullmatch, m)?)?;
     m.add_function(wrap_pyfunction!(split, m)?)?;
     m.add_function(wrap_pyfunction!(findall, m)?)?;

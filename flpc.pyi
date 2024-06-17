@@ -9,6 +9,26 @@ class Match:
     """A match object returned by a regex search."""
     mat: regex.Match
     def __init__(self, mat: regex.Match): ...
+    
+    def group(self, idx: int) -> Optional[str]:
+        """Return the string matched by the group idx."""
+        ...
+        
+    def groups(self) -> List[Optional[str]]:
+        """Return a list of all groups matched by the pattern."""
+        ...
+        
+    def start(self, idx: int) -> Optional[int]:
+        """Return the starting position of the match."""
+        ...
+        
+    def end(self, idx: int) -> Optional[int]:
+        """Return the ending position of the match."""
+        ...
+        
+    def span(self, idx: int) -> Optional[Tuple[int, int]]:
+        """Return a tuple containing the (start, end) positions of the match."""
+        ...
 
 class Scanner:
     """A scanner object (not implemented)."""

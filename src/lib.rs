@@ -1,7 +1,7 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
-use regex::{Regex, RegexBuilder};
+use regex::{Captures, Regex, RegexBuilder};
 
 #[pyclass]
 struct Pattern {
@@ -12,6 +12,7 @@ struct Pattern {
 struct Match {
     #[allow(dead_code)]
     mat: regex::Match<'static>,
+    captures: Captures<'static>,
 }
 
 #[pyclass]
@@ -30,6 +31,33 @@ struct Constants;
 
 #[pyclass]
 struct Sre;
+
+#[pymethods]
+impl Match {
+    fn group(&self, idx: usize) -> Option<String> {
+        self.captures.get(idx).map(|m| m.as_str().to_string())
+    }
+
+    fn groups(&self) -> Vec<Option<String>> {
+        self.captures
+            .iter()
+            .skip(1)
+            .map(|m| m.map(|mat| mat.as_str().to_string()))
+            .collect()
+    }
+
+    fn start(&self, idx: usize) -> Option<usize> {
+        self.captures.get(idx).map(|m| m.start())
+    }
+
+    fn end(&self, idx: usize) -> Option<usize> {
+        self.captures.get(idx).map(|m| m.end())
+    }
+
+    fn span(&self, idx: usize) -> Option<(usize, usize)> {
+        self.captures.get(idx).map(|m| (m.start(), m.end()))
+    }
+}
 
 #[pyfunction]
 fn compile(pattern: &str, flags: Option<u32>) -> PyResult<Pattern> {
@@ -54,9 +82,11 @@ fn compile(pattern: &str, flags: Option<u32>) -> PyResult<Pattern> {
 
 #[pyfunction]
 fn search(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
-    if let Some(mat) = pattern.regex.find(text) {
+    if let Some(captures) = pattern.regex.captures(text) {
+        let mat = captures.get(0).unwrap();
         Ok(Some(Match {
             mat: unsafe { std::mem::transmute(mat) },
+            captures: unsafe { std::mem::transmute(captures) },
         }))
     } else {
         Ok(None)
@@ -65,10 +95,12 @@ fn search(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
 
 #[pyfunction(name = "fmatch")]
 fn fmatch(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
-    if let Some(mat) = pattern.regex.find(text) {
+    if let Some(captures) = pattern.regex.captures(text) {
+        let mat = captures.get(0).unwrap();
         if mat.start() == 0 {
             Ok(Some(Match {
                 mat: unsafe { std::mem::transmute(mat) },
+                captures: unsafe { std::mem::transmute(captures) },
             }))
         } else {
             Ok(None)
@@ -80,10 +112,12 @@ fn fmatch(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
 
 #[pyfunction]
 fn fullmatch(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
-    if let Some(mat) = pattern.regex.find(text) {
+    if let Some(captures) = pattern.regex.captures(text) {
+        let mat = captures.get(0).unwrap();
         if mat.as_str() == text {
             Ok(Some(Match {
                 mat: unsafe { std::mem::transmute(mat) },
+                captures: unsafe { std::mem::transmute(captures) },
             }))
         } else {
             Ok(None)
@@ -111,9 +145,13 @@ fn findall(pattern: &Pattern, text: &str) -> PyResult<Vec<String>> {
 fn finditer(pattern: &Pattern, text: &str) -> PyResult<Vec<Match>> {
     Ok(pattern
         .regex
-        .find_iter(text)
-        .map(|mat| Match {
-            mat: unsafe { std::mem::transmute(mat) },
+        .captures_iter(text)
+        .map(|captures| {
+            let mat = captures.get(0).unwrap();
+            Match {
+                mat: unsafe { std::mem::transmute(mat) },
+                captures: unsafe { std::mem::transmute(captures) },
+            }
         })
         .collect())
 }
@@ -149,7 +187,7 @@ fn flpc(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<RegexFlag>()?;
     m.add_class::<Constants>()?;
     m.add_class::<Sre>()?;
-    m.add("__version__", "0.1.0")?;
+    m.add("__version__", "0.1.4")?;
     m.add(
         "__doc__",
         "A Rust-based regex crate wrapper for Python3 to get faster performance. 👾",

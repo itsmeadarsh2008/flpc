@@ -2,6 +2,9 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 use regex::{Captures, Regex, RegexBuilder};
+use std::collections::HashMap;
+use std::sync::Mutex;
+use lazy_static::lazy_static;
 
 #[pyclass]
 struct Pattern {
@@ -32,6 +35,11 @@ struct Constants;
 #[pyclass]
 struct Sre;
 
+// Global cache for compiled regex patterns
+lazy_static! {
+    static ref REGEX_CACHE: Mutex<HashMap<(String, u32), Regex>> = Mutex::new(HashMap::new());
+}
+
 #[pymethods]
 impl Match {
     fn group(&self, idx: usize) -> Option<String> {
@@ -61,70 +69,72 @@ impl Match {
 
 #[pyfunction]
 fn compile(pattern: &str, flags: Option<u32>) -> PyResult<Pattern> {
-    let mut builder = RegexBuilder::new(pattern);
-    if let Some(f) = flags {
-        if f & 0b0001 != 0 {
-            builder.case_insensitive(true);
-        }
-        if f & 0b0010 != 0 {
-            builder.multi_line(true);
-        }
-        if f & 0b0100 != 0 {
-            builder.dot_matches_new_line(true);
-        }
-        // Add other flags as needed
+    let flags = flags.unwrap_or(0);
+    let mut cache = REGEX_CACHE.lock().unwrap();
+    
+    if let Some(regex) = cache.get(&(pattern.to_string(), flags)) {
+        return Ok(Pattern { regex: regex.clone() });
     }
+
+    let mut builder = RegexBuilder::new(pattern);
+    if flags & 0b0001 != 0 {
+        builder.case_insensitive(true);
+    }
+    if flags & 0b0010 != 0 {
+        builder.multi_line(true);
+    }
+    if flags & 0b0100 != 0 {
+        builder.dot_matches_new_line(true);
+    }
+    // Add other flags as needed
+
     let regex = builder
         .build()
         .map_err(|e| PyValueError::new_err(e.to_string()))?;
+    
+    cache.insert((pattern.to_string(), flags), regex.clone());
     Ok(Pattern { regex })
 }
 
 #[pyfunction]
 fn search(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
-    if let Some(captures) = pattern.regex.captures(text) {
+    pattern.regex.captures(text).map(|captures| {
         let mat = captures.get(0).unwrap();
         Ok(Some(Match {
             mat: unsafe { std::mem::transmute(mat) },
             captures: unsafe { std::mem::transmute(captures) },
         }))
-    } else {
-        Ok(None)
-    }
+    }).unwrap_or(Ok(None))
 }
 
 #[pyfunction(name = "fmatch")]
 fn fmatch(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
-    if let Some(captures) = pattern.regex.captures(text) {
+    pattern.regex.captures(text).and_then(|captures| {
         let mat = captures.get(0).unwrap();
         if mat.start() == 0 {
-            Ok(Some(Match {
+            Some(Ok(Some(Match {
                 mat: unsafe { std::mem::transmute(mat) },
                 captures: unsafe { std::mem::transmute(captures) },
-            }))
+            })))
         } else {
-            Ok(None)
+            None
         }
-    } else {
-        Ok(None)
-    }
+    }).unwrap_or(Ok(None))
 }
 
 #[pyfunction]
 fn fullmatch(pattern: &Pattern, text: &str) -> PyResult<Option<Match>> {
-    if let Some(captures) = pattern.regex.captures(text) {
+    pattern.regex.captures(text).and_then(|captures| {
         let mat = captures.get(0).unwrap();
         if mat.as_str() == text {
-            Ok(Some(Match {
+            Some(Ok(Some(Match {
                 mat: unsafe { std::mem::transmute(mat) },
                 captures: unsafe { std::mem::transmute(captures) },
-            }))
+            })))
         } else {
-            Ok(None)
+            None
         }
-    } else {
-        Ok(None)
-    }
+    }).unwrap_or(Ok(None))
 }
 
 #[pyfunction]
@@ -175,7 +185,7 @@ fn escape(text: &str) -> PyResult<String> {
 
 #[pyfunction]
 fn purge() -> PyResult<()> {
-    // Implement cache purge if necessary
+    REGEX_CACHE.lock().unwrap().clear();
     Ok(())
 }
 
@@ -190,7 +200,7 @@ fn flpc(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", "0.1.4")?;
     m.add(
         "__doc__",
-        "A Rust-based regex crate wrapper for Python3 to get faster performance. 👾",
+        "",
     )?;
     m.add("__name__", "flpc")?;
     m.add("__package__", "flpc")?;

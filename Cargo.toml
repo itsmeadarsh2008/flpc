@@ -11,3 +11,4 @@ crate-type = ["cdylib"]
 [dependencies]
 pyo3 = "0.21.1"
 regex = "1.10.5"
+lazy_static = "1.4.0"

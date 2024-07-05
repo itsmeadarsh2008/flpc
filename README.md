@@ -16,7 +16,7 @@
 </div>
 
 ## 🌟 Why flpc?
-[`CURRENTLY IN EXPERIMENTAL STAGE`]
+Being in experimental stage. The code structure and dependencies may change. If your project is using this. You will have to manually configure the migrations to latest versions.
 
 flpc is a powerful Python library that wraps the blazing-fast [Rust regex crate](https://crates.io/crates/regex), bringing enhanced speed to your regular expression operations. It's designed to be a drop-in replacement for Python's native `re` module, with some minor syntax differences.
 

@@ -5,6 +5,7 @@ use regex::{Captures, Regex, RegexBuilder};
 use std::collections::HashMap;
 use std::sync::Mutex;
 use lazy_static::lazy_static;
+use unicode_segmentation::UnicodeSegmentation;
 
 #[pyclass]
 struct Pattern {
@@ -55,19 +56,29 @@ impl Match {
     }
 
     fn start(&self, idx: usize) -> Option<usize> {
-        self.captures.get(idx).map(|m| m.start())
+        self.captures.get(idx).map(|m| {
+            self.captures.get(0).unwrap().as_str()[..m.start()].graphemes(true).count()
+        })
     }
 
     fn end(&self, idx: usize) -> Option<usize> {
-        self.captures.get(idx).map(|m| m.end())
+        self.captures.get(idx).map(|m| {
+            self.captures.get(0).unwrap().as_str()[..m.end()].graphemes(true).count()
+        })
     }
 
     fn span(&self, idx: usize) -> Option<(usize, usize)> {
-        self.captures.get(idx).map(|m| (m.start(), m.end()))
+        self.captures.get(idx).map(|m| {
+            let full_match = self.captures.get(0).unwrap().as_str();
+            let start = full_match[..m.start()].graphemes(true).count();
+            let end = full_match[..m.end()].graphemes(true).count();
+            (start, end)
+        })
     }
 }
 
 #[pyfunction]
+#[pyo3(signature = (pattern, flags=None))]
 fn compile(pattern: &str, flags: Option<u32>) -> PyResult<Pattern> {
     let flags = flags.unwrap_or(0);
     let mut cache = REGEX_CACHE.lock().unwrap();

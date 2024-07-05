@@ -1,6 +1,6 @@
 [package]
 name = "flpc"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,6 +9,7 @@ name = "flpc"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = "0.21.1"
+pyo3 = "0.22.0"
 regex = "1.10.5"
-lazy_static = "1.4.0"
+lazy_static = "1.5.0"
+unicode-segmentation = "1.11.0"

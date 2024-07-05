@@ -1,6 +1,6 @@
 [project]
 name = "flpc"
-version = "0.2.2"
+version = "0.2.3"
 description = "A Lightning Fast ⚡ Rust-based regex crate wrapper for Python3 to get faster performance. 👾"
 maintainers = [{ name = "Adarsh Gourab Mahalik", email = "gourabmahalikadarsh@gmail.com" }]
 readme = "README.md"

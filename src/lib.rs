@@ -5,7 +5,6 @@ use regex::{Captures, Regex, RegexBuilder};
 use std::collections::HashMap;
 use std::sync::Mutex;
 use lazy_static::lazy_static;
-use unicode_segmentation::UnicodeSegmentation;
 
 #[pyclass]
 struct Pattern {
@@ -57,21 +56,21 @@ impl Match {
 
     fn start(&self, idx: usize) -> Option<usize> {
         self.captures.get(idx).map(|m| {
-            self.captures.get(0).unwrap().as_str()[..m.start()].graphemes(true).count()
+            self.captures.get(0).unwrap().as_str()[..m.start()].chars().count()
         })
     }
 
     fn end(&self, idx: usize) -> Option<usize> {
         self.captures.get(idx).map(|m| {
-            self.captures.get(0).unwrap().as_str()[..m.end()].graphemes(true).count()
+            self.captures.get(0).unwrap().as_str()[..m.end()].chars().count()
         })
     }
 
     fn span(&self, idx: usize) -> Option<(usize, usize)> {
         self.captures.get(idx).map(|m| {
             let full_match = self.captures.get(0).unwrap().as_str();
-            let start = full_match[..m.start()].graphemes(true).count();
-            let end = full_match[..m.end()].graphemes(true).count();
+            let start = full_match[..m.start()].chars().count();
+            let end = full_match[..m.end()].chars().count();
             (start, end)
         })
     }
